@@ -1,37 +1,10 @@
-"use client";
+import { getProjects } from "@/lib/projects-db";
 
-import { useEffect, useState } from "react";
+export default async function OpenSourcePage() {
+  // Temporary delay for testing the loading skeleton
+  // await new Promise((resolve) => setTimeout(resolve, 2000));
 
-interface Project {
-  id: number;
-  title: string;
-  description: string;
-  technologies: string[];
-  link?: string;
-}
-
-export default function OpenSourcePage() {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    async function fetchProjects() {
-      try {
-        const response = await fetch("/api/projects?type=opensource");
-        const data = await response.json();
-
-        setProjects(data);
-      } catch (error) {
-        console.error("Error fetching open-source projects:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchProjects();
-  }, []);
-
-  if (loading) return <p>Loading open-source projects...</p>;
+  const projects = await getProjects("opensource");
 
   return (
     <div>
@@ -42,8 +15,13 @@ export default function OpenSourcePage() {
           <h2 className="text-xl font-semibold">{project.title}</h2>
           <p>{project.description}</p>
           <p>Technologies: {project.technologies.join(", ")}</p>
+
           {project.link && (
-            <a href={project.link} target="_blank" rel="noopener noreferrer">
+            <a
+              href={project.link}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               View Project
             </a>
           )}
